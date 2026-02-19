@@ -16,7 +16,7 @@ struct Studentas
     int egzaminas;
 };
 
-double skaiciuotiVidurki( const int* nd, int n )
+double skaiciuotiVidurki( const std::vector<int>& nd, int n )
 {
     if ( n == 0 )
         return 0.0;
@@ -28,24 +28,20 @@ double skaiciuotiVidurki( const int* nd, int n )
     return suma / n;
 }
 
-double skaiciuotiMediana( int* nd, int n )
+double skaiciuotiMediana( const std::vector<int>& nd, int n )
 {
     if ( n == 0 )
         return 0.0;
 
-    int* laikinas = new int [ n ];
-    for ( int i = 0; i < n; i++ )
-        laikinas [ i ] = nd [ i ];
-
-    std::sort( laikinas, laikinas + n );
+    std::vector<int> copy = nd;
+    std::sort( copy.begin(), copy.end() );
 
     double rezultatas;
     if ( n % 2 == 0 )
-        rezultatas = ( laikinas [ n / 2 - 1 ] + laikinas [ n / 2 ] ) / 2.0;
+        rezultatas = ( copy [ n / 2 - 1 ] + copy [ n / 2 ] ) / 2.0;
     else
-        rezultatas = laikinas [ n / 2 ];
+        rezultatas = copy [ n / 2 ];
 
-    delete[ ] laikinas;
     return rezultatas;
 }
 
@@ -72,7 +68,7 @@ bool skaitytiSveika( int& reiksme, int min_val, int max_val )
 void generuotiPazymius( Studentas& s, int n )
 {
     s.n = n;
-    s.nd = new int [ n ];
+    s.nd.resize( n );
 
     for ( int i = 0; i < n; i++ )
         s.nd [ i ] = rand( ) % 10 + 1;
@@ -87,14 +83,6 @@ void generuotiVarda( Studentas& s, int indeksas )
 
     s.vardas = vardai [ indeksas % 8 ];
     s.pavarde = pavardes [ indeksas % 6 ];
-}
-
-void free_students( Studentas* studentai, int m )
-{
-    for ( int i = 0; i < m; i++ )
-        delete[ ] studentai [ i ].nd;
-
-    delete[ ] studentai;
 }
 
 void spausdintiRezultatus( const std::vector<Studentas>& studentai, int m, bool mediana )
@@ -159,7 +147,7 @@ std::vector<Studentas> ivestiRankiniu( int& m, int& n )
         std::cin >> studentas.pavarde;
 
         studentas.n = n;
-        studentas.nd.reserve( n );
+        studentas.nd.resize( n );
 
         for ( int j = 0; j < n; j++ )
         {
@@ -224,8 +212,6 @@ int main( )
                 spausdintiRezultatus( studentai, m, mediana );
             else
                 std::cout << "Nera studentu duomenu.\n";
-
-            free_students( studentai, m );
             break;
         }
 
@@ -241,7 +227,7 @@ int main( )
                 std::cout << "Neteisinga reiksme: ";
             }
 
-            Studentas* studentai = new Studentas [ m ];
+            std::vector<Studentas> studentai( m );
 
             for ( int i = 0; i < m; i++ )
             {
@@ -255,7 +241,6 @@ int main( )
             }
 
             spausdintiRezultatus( studentai, m, mediana );
-            free_students( studentai, m );
             break;
         }
 
@@ -271,7 +256,8 @@ int main( )
                 std::cout << "Neteisinga reiksme: ";
             }
 
-            Studentas* studentai = new Studentas [ m ];
+            std::vector<Studentas> studentai( m );
+            //studentai.resize( m );
 
             for ( int i = 0; i < m; i++ )
             {
@@ -280,7 +266,6 @@ int main( )
             }
 
             spausdintiRezultatus( studentai, m, mediana );
-            free_students( studentai, m );
             break;
         }
 
