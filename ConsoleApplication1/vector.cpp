@@ -158,6 +158,7 @@ std::vector<Studentas> ivestiRankiniu( int& m, int& n )
         }
 
         std::cout << "Egzamino balas (1-10): ";
+
         while ( !skaitytiSveika( studentas.egzaminas, 1, 10 ) ) {
             std::cout << "  Neteisinga reiksme (1-10): ";
         }
