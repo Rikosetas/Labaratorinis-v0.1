@@ -82,6 +82,7 @@ void generuotiVarda( Studentas& s, int indeksas )
     std::string vardai[ ] = { "Jonas", "Petras", "Ona", "Marta", "Lukas", "Egle", "Tomas", "Inga" };
     std::string pavardes[ ] = { "Jonaitis", "Petraitis", "Kazlauskas", "Stankevicious", "Vaitkus", "Lukosius" };
 
+
     s.vardas = vardai [ indeksas % 8 ];
     s.pavarde = pavardes [ indeksas % 6 ];
 }
