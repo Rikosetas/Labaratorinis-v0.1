@@ -65,6 +65,7 @@ bool skaitytiSveika( int& reiksme, int min_val, int max_val )
     return true;
 }
 
+
 void generuotiPazymius( Studentas& s, int n )
 {
     s.n = n;
