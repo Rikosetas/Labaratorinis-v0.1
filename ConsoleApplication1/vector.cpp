@@ -8,6 +8,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 
 struct Studentas
 {
@@ -89,38 +90,116 @@ void generuotiVarda( Studentas& s, int indeksas )
     s.pavarde = pavardes [ indeksas % 6 ];
 }
 
-void spausdintiRezultatus( const std::vector<Studentas>& studentai, int m, bool mediana )
+int pasirinktiRusiavima( ) 
 {
-    std::cout << "\n" << std::string( 70, '-' ) << "\n";
+    int pasirinkimas;
 
-    std::cout << std::left << std::setw( 25 ) << "Pavarde Vardas"
+    std::cout << "\nRusiavimo pasirinkimas:\n";
+    std::cout << "  1 - Pagal varda\n";
+    std::cout << "  2 - Pagal pavarde\n";
+    std::cout << "  3 - Pagal galutini (vidurkis)\n";
+    std::cout << "  4 - Pagal galutini (mediana)\n";
+    std::cout << "Pasirinkimas: ";
+
+    while ( !skaitytiSveika( pasirinkimas, 1, 4 ) ) {
+        std::cout << "Neteisinga reiksme. Pasirinkite 1-4: ";
+    }
+
+    return pasirinkimas;
+}
+
+void rusiuotiStudentus( std::vector<Studentas>& studentai, int rusiavimas ) 
+{
+    switch ( rusiavimas ) {
+    case 1:
+        std::sort( studentai.begin( ), studentai.end( ), [ ] ( const Studentas& a, const Studentas& b ) {
+            return a.vardas < b.vardas;
+            } );
+        break;
+    case 2:
+        std::sort( studentai.begin( ), studentai.end( ), [ ] ( const Studentas& a, const Studentas& b ) {
+            return a.pavarde < b.pavarde;
+            } );
+        break;
+    case 3:
+        std::sort( studentai.begin( ), studentai.end( ), [ ] ( const Studentas& a, const Studentas& b ) {
+            double ga = skaiciuotiGalutini( skaiciuotiVidurki( a.nd, a.n ), a.egzaminas );
+            double gb = skaiciuotiGalutini( skaiciuotiVidurki( b.nd, b.n ), b.egzaminas );
+            return ga > gb;
+            } );
+        break;
+    case 4:
+        std::sort( studentai.begin( ), studentai.end( ), [ ] ( const Studentas& a, const Studentas& b ) {
+            double ga = skaiciuotiGalutini( skaiciuotiMediana( a.nd, a.n ), a.egzaminas );
+            double gb = skaiciuotiGalutini( skaiciuotiMediana( b.nd, b.n ), b.egzaminas );
+            return ga > gb;
+            } );
+        break;
+    }
+}
+
+template <typename Stream>
+void spausdintiIStream( Stream& out, const std::vector<Studentas>& studentai, bool mediana ) 
+{
+    out << "\n" << std::string( 70, '-' ) << "\n";
+
+    out << std::left << std::setw( 15 ) << "Pavarde"
+        << std::setw( 15 ) << "Vardas"
         << std::setw( 20 ) << "Galutinis (Vid.)";
 
-    if ( mediana )
-        std::cout << std::setw( 20 ) << "Galutinis (Med.)";
+    if ( mediana ) out << std::setw( 20 ) << "Galutinis (Med.)";
 
-    std::cout << "\n";
-    std::cout << std::string( 70, '-' ) << "\n";
+    out << "\n" << std::string( 70, '-' ) << "\n";
 
-    for ( int i = 0; i < m; i++ )
+    for ( const auto& s : studentai ) 
     {
-        double vid = skaiciuotiGalutini( skaiciuotiVidurki( studentai [ i ].nd, studentai [ i ].n ), studentai [ i ].egzaminas );
+        double vid = skaiciuotiGalutini( skaiciuotiVidurki( s.nd, s.n ), s.egzaminas );
 
-        std::cout << std::left << std::setw( 25 )
-            << ( studentai [ i ].pavarde + " " + studentai [ i ].vardas )
+        out << std::left << std::setw( 15 ) << s.pavarde
+            << std::setw( 15 ) << s.vardas
             << std::fixed << std::setprecision( 2 )
             << std::setw( 20 ) << vid;
 
-        if ( mediana )
+        if ( mediana ) 
         {
-            double med = skaiciuotiGalutini( skaiciuotiMediana( studentai [ i ].nd, studentai [ i ].n ), studentai [ i ].egzaminas );
-            std::cout << std::setw( 20 ) << med;
+            double med = skaiciuotiGalutini( skaiciuotiMediana( s.nd, s.n ), s.egzaminas );
+            out << std::setw( 20 ) << med;
         }
 
-        std::cout << "\n";
+        out << "\n";
     }
 
-    std::cout << std::string( 70, '-' ) << "\n";
+    out << std::string( 70, '-' ) << "\n";
+}
+
+void spausdintiRezultatus( std::vector<Studentas>& studentai, int m, bool mediana )
+{
+    int rusiavimas = pasirinktiRusiavima( );
+    rusiuotiStudentus( studentai, rusiavimas );
+
+    int outputPasirinkimas;
+    std::cout << "\nIsvedimo vieta:\n  1 - Ekranas\n  2 - Failas\nPasirinkimas: ";
+
+    while ( !skaitytiSveika( outputPasirinkimas, 1, 2 ) ) {
+        std::cout << "Neteisinga reiksme. Pasirinkite 1 arba 2: ";
+    }
+
+    if ( outputPasirinkimas == 1 ) 
+    {
+        spausdintiIStream( std::cout, studentai, mediana );
+    }
+    else 
+    {
+        std::ofstream stream( "rezultatai.txt" );
+        if ( !stream.is_open( ) ) 
+        {
+            std::cout << "Nepavyko atidaryti failo rasymui!\n";
+            return;
+        }
+
+        spausdintiIStream( stream, studentai, mediana );
+        std::cout << "Rezultatai issaugoti faile: rezultatai.txt\n";
+    }
 }
 
 std::vector<Studentas> ivestiRankiniu( int& m, int& n )
@@ -181,6 +260,8 @@ std::vector<Studentas> nuskaitytiStudentus( )
     if ( !stream.is_open( ) )
         return { };
 
+    auto start = std::chrono::high_resolution_clock::now( );
+
     std::vector<Studentas> out;
 
     std::string line;
@@ -213,6 +294,11 @@ std::vector<Studentas> nuskaitytiStudentus( )
 
         out.push_back( studentas );
     }
+
+    auto end = std::chrono::high_resolution_clock::now( );
+
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>( end - start );
+    std::cout << "Nuskaityti " << out.size( ) << " studentu is per " << std::fixed << std::setprecision( 3 ) << elapsed.count() << " ms\n";
 
     return out;
 }
@@ -323,10 +409,8 @@ int main( )
 
             if ( studentai.size( ) > 0 )
                 spausdintiRezultatus( studentai, studentai.size(), mediana );
-            else {
+            else
                 std::cout << "Nera studentu duomenu.\n";
-                break;
-            }
 
             break;
         }
