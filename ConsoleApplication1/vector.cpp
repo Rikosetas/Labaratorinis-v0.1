@@ -6,6 +6,8 @@
 #include <ctime>
 #include <limits>
 #include <vector>
+#include <fstream>
+#include <sstream>
 
 struct Studentas
 {
@@ -173,6 +175,48 @@ std::vector<Studentas> ivestiRankiniu( int& m, int& n )
     return studentai;
 }
 
+std::vector<Studentas> nuskaitytiStudentus( )
+{
+    std::ifstream stream( "kursiokai.txt" );
+    if ( !stream.is_open( ) )
+        return { };
+
+    std::vector<Studentas> out;
+
+    std::string line;
+    std::getline( stream, line );
+
+    std::stringstream header_stream( line );
+
+    std::string column;
+    std::vector<std::string> cols;
+
+    while ( header_stream >> column )
+        cols.push_back( column );
+
+    while ( std::getline( stream, line ) )
+    {
+        std::stringstream ss( line );
+
+        Studentas studentas;
+        studentas.n = cols.size( ) - 3;
+        studentas.nd.resize( cols.size( ) - 3 );
+
+        ss >> studentas.vardas >> studentas.pavarde;
+
+        for ( int i = 0; i < cols.size( ) - 3; i++ )
+        {
+            ss >> studentas.nd [ i ];
+        }
+
+        ss >> studentas.egzaminas;
+
+        out.push_back( studentas );
+    }
+
+    return out;
+}
+
 int main( )
 {
     std::srand( std::time( nullptr ) );
@@ -196,7 +240,8 @@ int main( )
         std::cout << "  1 - Ivesti duomenis rankiniu budu\n";
         std::cout << "  2 - Generuoti tik pazymius\n";
         std::cout << "  3 - Generuoti vardus, pavardes ir pazymius\n";
-        std::cout << "  4 - Baigti darba\n";
+        std::cout << "  4 - Nuskaityti studentus is failo\n";
+        std::cout << "  5 - Baigti darba\n";
         std::cout << "Pasirinkimas: ";
 
         if ( !skaitytiSveika( meniu, 1, 4 ) )
@@ -273,6 +318,20 @@ int main( )
         }
 
         case 4:
+        { 
+            std::vector<Studentas> studentai = nuskaitytiStudentus();
+
+            if ( studentai.size( ) > 0 )
+                spausdintiRezultatus( studentai, studentai.size(), mediana );
+            else {
+                std::cout << "Nera studentu duomenu.\n";
+                break;
+            }
+
+            break;
+        }
+
+        case 5:
         {
             std::cout << "Programa baigta.\n";
             break;
