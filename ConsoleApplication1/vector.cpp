@@ -183,23 +183,6 @@ void spausdintiRezultatus( std::vector<Studentas>& studentai, int m, bool median
     while ( !skaitytiSveika( outputPasirinkimas, 1, 2 ) ) {
         std::cout << "Neteisinga reiksme. Pasirinkite 1 arba 2: ";
     }
-
-    if ( outputPasirinkimas == 1 ) 
-    {
-        spausdintiIStream( std::cout, studentai, mediana );
-    }
-    else 
-    {
-        std::ofstream stream( "rezultatai.txt" );
-        if ( !stream.is_open( ) ) 
-        {
-            std::cout << "Nepavyko atidaryti failo rasymui!\n";
-            return;
-        }
-
-        spausdintiIStream( stream, studentai, mediana );
-        std::cout << "Rezultatai issaugoti faile: rezultatai.txt\n";
-    }
 }
 
 std::vector<Studentas> ivestiRankiniu( int& m, int& n )
