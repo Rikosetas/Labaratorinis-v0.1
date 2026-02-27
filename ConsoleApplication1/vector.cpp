@@ -226,6 +226,8 @@ std::vector<Studentas> ivestiRankiniu( int& m, int& n )
         if ( studentas.vardas == "baigti" )
             break;
 
+
+
         std::cout << "Pavarde: ";
         std::cin >> studentas.pavarde;
 
