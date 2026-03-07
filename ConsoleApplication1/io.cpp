@@ -58,6 +58,7 @@ void spausdintiIStream( Stream& out, const std::vector<Studentas>& studentai, bo
     out << std::string( 70, '-' ) << "\n";
 }
 
+
 void spausdintiRezultatus( std::vector<Studentas>& studentai, int m, bool mediana )
 {
     int rusiavimas = pasirinktiRusiavima( );
