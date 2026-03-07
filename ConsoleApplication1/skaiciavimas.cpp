@@ -22,6 +22,7 @@ double skaiciuotiMediana( const std::vector<int>& nd, int n )
     std::sort( copy.begin(), copy.end() );
 
     double rezultatas;
+
     if ( n % 2 == 0 )
         rezultatas = ( copy [ n / 2 - 1 ] + copy [ n / 2 ] ) / 2.0;
     else
