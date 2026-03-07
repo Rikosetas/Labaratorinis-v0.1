@@ -9,4 +9,5 @@ void generuotiVarda( Studentas& s, int indeksas );
 int pasirinktiRusiavima( );
 void rusiuotiStudentus( std::vector<Studentas>& studentai, int rusiavimas );
 
+
 #endif
