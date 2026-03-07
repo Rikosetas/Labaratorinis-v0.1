@@ -132,6 +132,7 @@ int main( )
         catch ( const DuomenuKlaida& e )
         {
             std::cerr << "Duomenu klaida: " << e.what( ) << "\n";
+
         }
         catch ( const std::exception& e )
         {
