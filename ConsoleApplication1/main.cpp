@@ -139,7 +139,6 @@ int main( )
             std::cerr << "Klaida: " << e.what( ) << "\n";
         }
 
-
     } while ( meniu != 5 );
 
     return 0;
