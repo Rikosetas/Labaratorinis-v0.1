@@ -30,6 +30,7 @@ int pasirinktiRusiavima( )
 {
     int pasirinkimas;
 
+
     std::cout << "\nRusiavimo pasirinkimas:\n";
     std::cout << "  1 - Pagal varda\n";
     std::cout << "  2 - Pagal pavarde\n";
