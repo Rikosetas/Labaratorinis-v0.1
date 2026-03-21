@@ -274,6 +274,7 @@ void tyrimas2_duomenuApdorojimas( bool mediana )
             isvedimo_suma += isvedimo_laikas;
             viso_suma += viso_laikas;
         }
+          
 
         std::cout << std::left << std::setw( 15 ) << dydziai[ i ]
             << std::fixed << std::setprecision( 5 )
