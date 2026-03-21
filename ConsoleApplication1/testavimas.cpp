@@ -247,6 +247,7 @@ void tyrimas2_duomenuApdorojimas( bool mediana )
                     vargsiukai.push_back( s );
             }
 
+
             rusiuotiStudentus( kietiakiai, rusiavimas );
             rusiuotiStudentus( vargsiukai, rusiavimas );
 
