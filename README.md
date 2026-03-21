@@ -16,11 +16,13 @@ Programa skirta studentu egzaminu ir namu darbu rezultatams apdoroti. Sis leidim
 ### Failo formatas
 
 ```
-Vardas              Pavarde             ND1       ND2       ND3       ND4       ND5       Egz
-Vardas1             Pavarde1            8         9         10        7         6         9
-Vardas2             Pavarde2            5         6         7         8         9         4
+Vardas                   Pavarde                    ND1       ND2       ND3       ...      ND15      Egz.
+Vardas1                  Pavarde1                      8         5         8       ...         5         3
+Vardas2                  Pavarde2                      6         6         5       ...         5         7
 ...
 ```
+
+Generuojami failai naudoja 15 namu darbu stulpeliu (ND1-ND15), kaip ir originaluose PVZ. failuose.
 
 ### Galutinio balo formule
 

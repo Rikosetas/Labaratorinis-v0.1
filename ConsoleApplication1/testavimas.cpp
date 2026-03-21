@@ -20,19 +20,20 @@ void generuotiFaila( const std::string& failoVardas, int irasu_sk, int nd_kiekis
         throw FailoKlaida( "Nepavyko sukurti failo: " + failoVardas );
 
     out << std::left
-        << std::setw( 20 ) << "Vardas"
-        << std::setw( 20 ) << "Pavarde";
+        << std::setw( 25 ) << "Vardas"
+        << std::setw( 27 ) << "Pavarde";
 
     for ( int i = 1; i <= nd_kiekis; i++ )
         out << std::setw( 10 ) << ( "ND" + std::to_string( i ) );
 
-    out << std::setw( 10 ) << "Egz" << "\n";
+    out << std::setw( 10 ) << "Egz." << "\n";
 
     for ( int i = 1; i <= irasu_sk; i++ )
     {
         out << std::left
-            << std::setw( 20 ) << ( "Vardas" + std::to_string( i ) )
-            << std::setw( 20 ) << ( "Pavarde" + std::to_string( i ) );
+            << std::setw( 25 ) << ( "Vardas" + std::to_string( i ) )
+            << std::setw( 27 ) << ( "Pavarde" + std::to_string( i ) )
+            << std::right;
 
         for ( int j = 0; j < nd_kiekis; j++ )
             out << std::setw( 10 ) << ( rand( ) % 10 + 1 );
@@ -134,7 +135,7 @@ void tyrimas1_failuKurimas( )
         "studentai_1000000.txt",
         "studentai_10000000.txt"
     };
-    const int nd_kiekis = 5;
+    const int nd_kiekis = 15;
     const int bandymu_sk = 3;
 
     std::cout << "\n================ 1 TYRIMAS: Failu kurimas ================\n\n";
