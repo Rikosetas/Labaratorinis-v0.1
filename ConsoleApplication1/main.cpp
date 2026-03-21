@@ -121,7 +121,6 @@ int main( )
                 break;
             }
 
-
             case 5:
             {
                 tyrimas1_failuKurimas( );
