@@ -161,6 +161,7 @@ void tyrimas1_failuKurimas( )
             generuotiFaila( pavadinimai[ i ], dydziai[ i ], nd_kiekis );
             auto end = std::chrono::high_resolution_clock::now( );
 
+
             laikai[ b ] = std::chrono::duration<double>( end - start ).count( );
             suma += laikai[ b ];
         }
