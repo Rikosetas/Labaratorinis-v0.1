@@ -189,6 +189,7 @@ void tyrimas2_duomenuApdorojimas( bool mediana )
     };
     const int bandymu_sk = 3;
 
+
     int rusiavimas = pasirinktiRusiavima( );
 
     std::cout << "\n================ 2 TYRIMAS: Duomenu apdorojimas ================\n\n";
