@@ -154,6 +154,7 @@ void tyrimas1_failuKurimas( )
 
         for ( int b = 0; b < bandymu_sk; b++ )
         {
+
             std::remove( pavadinimai[ i ].c_str( ) );
 
             auto start = std::chrono::high_resolution_clock::now( );
