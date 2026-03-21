@@ -252,6 +252,7 @@ void tyrimas2_duomenuApdorojimas( bool mediana )
             rusiuotiStudentus( vargsiukai, rusiavimas );
 
             end = std::chrono::high_resolution_clock::now( );
+
             double rusiavimo_laikas = std::chrono::duration<double>( end - start ).count( );
 
             start = std::chrono::high_resolution_clock::now( );
