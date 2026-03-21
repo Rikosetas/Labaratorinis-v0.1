@@ -1,6 +1,7 @@
 #include "io.h"
 #include "studentas_utils.h"
 #include "exceptions.h"
+#include "testavimas.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -29,10 +30,12 @@ int main( )
         std::cout << "  2 - Generuoti tik pazymius\n";
         std::cout << "  3 - Generuoti vardus, pavardes ir pazymius\n";
         std::cout << "  4 - Nuskaityti studentus is failo\n";
-        std::cout << "  5 - Baigti darba\n";
+        std::cout << "  5 - 1 tyrimas: Failu generavimas ir kurimo spartos testas\n";
+        std::cout << "  6 - 2 tyrimas: Duomenu apdorojimo spartos testas\n";
+        std::cout << "  7 - Baigti darba\n";
         std::cout << "Pasirinkimas: ";
 
-        if ( !skaitytiSveika( meniu, 1, 5 ) )
+        if ( !skaitytiSveika( meniu, 1, 7 ) )
         {
             std::cout << "Neteisinga reiksme.\n";
             continue;
@@ -120,6 +123,18 @@ int main( )
 
             case 5:
             {
+                tyrimas1_failuKurimas( );
+                break;
+            }
+
+            case 6:
+            {
+                tyrimas2_duomenuApdorojimas( mediana );
+                break;
+            }
+
+            case 7:
+            {
                 std::cout << "Programa baigta.\n";
                 break;
             }
@@ -139,7 +154,7 @@ int main( )
             std::cerr << "Klaida: " << e.what( ) << "\n";
         }
 
-    } while ( meniu != 5 );
+    } while ( meniu != 7 );
 
 
     return 0;

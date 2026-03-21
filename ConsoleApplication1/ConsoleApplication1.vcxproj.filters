@@ -27,6 +27,9 @@
     <ClCompile Include="studentas_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="testavimas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="studentas.h">
@@ -41,10 +44,10 @@
     <ClInclude Include="io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="io.inl">
+    <ClInclude Include="studentas_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="studentas_utils.h">
+    <ClInclude Include="testavimas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
