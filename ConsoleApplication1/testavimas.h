@@ -109,4 +109,22 @@ void rusiuotiPagalGalutini( Container& c, bool mediana )
         std::sort( c.begin( ), c.end( ), comp );
 }
 
+// ---------------------------------------------------------------------------
+// 1 strategija: bendras konteineris lieka nepakeistas,
+// studentai kopijuojami i du naujus konteinerius (kietiakiai ir vargsiukai).
+// Neefektyvu atminties atzvilgiu - studentas egzistuoja dviejuose konteineriuose.
+// ---------------------------------------------------------------------------
+template<typename Container>
+void strategija1( const Container& studentai, Container& kietiakiai,
+    Container& vargsiukai, bool mediana )
+{
+    for ( const auto& s : studentai )
+    {
+        if ( apskaiciuotiGalutiniBala( s, mediana ) >= 5.0 )
+            kietiakiai.push_back( s );
+        else
+            vargsiukai.push_back( s );
+    }
+}
+
 #endif
