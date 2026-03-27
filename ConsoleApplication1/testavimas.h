@@ -176,4 +176,37 @@ void strategija3( Container& studentai, Container& vargsiukai, bool mediana )
     }
 }
 
+// ---------------------------------------------------------------------------
+// Benchmark: konteineriu palyginimas (nuskaitymas, rusiavimas, skaidymas)
+// Naudojama 1-a strategija kaip bazinis skaidymo metodas.
+// ---------------------------------------------------------------------------
+template<typename Container>
+void benchmarkKonteineris( const std::string& failas, bool mediana, int bandymu_sk,
+    double& nusk_avg, double& rus_avg, double& skaid_avg )
+{
+    double nusk_suma = 0, rus_suma = 0, skaid_suma = 0;
+
+    for ( int b = 0; b < bandymu_sk; b++ )
+    {
+        auto t1 = std::chrono::high_resolution_clock::now( );
+        Container data = nuskaitytiIsFailoT<Container>( failas );
+        auto t2 = std::chrono::high_resolution_clock::now( );
+
+        rusiuotiPagalGalutini( data, mediana );
+        auto t3 = std::chrono::high_resolution_clock::now( );
+
+        Container kiet, varg;
+        strategija1( data, kiet, varg, mediana );
+        auto t4 = std::chrono::high_resolution_clock::now( );
+
+        nusk_suma += std::chrono::duration<double>( t2 - t1 ).count( );
+        rus_suma += std::chrono::duration<double>( t3 - t2 ).count( );
+        skaid_suma += std::chrono::duration<double>( t4 - t3 ).count( );
+    }
+
+    nusk_avg = nusk_suma / bandymu_sk;
+    rus_avg = rus_suma / bandymu_sk;
+    skaid_avg = skaid_suma / bandymu_sk;
+}
+
 #endif
