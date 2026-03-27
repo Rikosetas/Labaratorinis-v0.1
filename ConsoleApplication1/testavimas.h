@@ -150,4 +150,30 @@ void strategija2( Container& studentai, Container& vargsiukai, bool mediana )
     }
 }
 
+// ---------------------------------------------------------------------------
+// 3 strategija: optimizuota naudojant std::stable_partition.
+// Visi kietiakiai perkeliami i konteinerio pradzia, vargsiukai - i gala.
+// Tada vargsiukai efektyviai iskeliami vienu range erase/splice.
+// ---------------------------------------------------------------------------
+template<typename Container>
+void strategija3( Container& studentai, Container& vargsiukai, bool mediana )
+{
+    auto it = std::stable_partition( studentai.begin( ), studentai.end( ),
+        [mediana]( const Studentas& s ) {
+            return apskaiciuotiGalutiniBala( s, mediana ) >= 5.0;
+        } );
+
+    if constexpr ( std::is_same_v<Container, std::list<Studentas>> )
+    {
+        vargsiukai.splice( vargsiukai.end( ), studentai, it, studentai.end( ) );
+    }
+    else
+    {
+        vargsiukai.insert( vargsiukai.end( ),
+            std::make_move_iterator( it ),
+            std::make_move_iterator( studentai.end( ) ) );
+        studentai.erase( it, studentai.end( ) );
+    }
+}
+
 #endif
