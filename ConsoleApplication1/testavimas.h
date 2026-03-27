@@ -81,4 +81,15 @@ Container nuskaitytiIsFailoT( const std::string& failoVardas )
     return out;
 }
 
+// ---------------------------------------------------------------------------
+// Apskaiciuoti galutini bala
+// ---------------------------------------------------------------------------
+inline double apskaiciuotiGalutiniBala( const Studentas& s, bool mediana )
+{
+    if ( mediana )
+        return skaiciuotiGalutini( skaiciuotiMediana( s.nd, s.n ), s.egzaminas );
+    else
+        return skaiciuotiGalutini( skaiciuotiVidurki( s.nd, s.n ), s.egzaminas );
+}
+
 #endif
