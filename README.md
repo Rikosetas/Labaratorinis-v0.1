@@ -100,3 +100,74 @@ cmake --build . --config Release
 3. Pasirinkite **5** - sugeneruojami testiniai failai (1 000 - 1 000 000 irasu)
 4. Pasirinkite **6** - atliekamas konteineriu palyginimo tyrimas
 5. Pasirinkite **7** - atliekamas strategiju palyginimo tyrimas
+
+---
+
+## Spartos tyrimo rezultatai
+
+Visi matavimai atlikti **3 kartus**, pateikiamas vidurkis. Naudojama **mediana** galutiniam balui skaiciuoti. Testiniai failai sugeneruoti viena karta ir naudojami visiems tyrimams (tyrimo patikimumui).
+
+### 1 tyrimas: Failu kurimas
+
+| Irasu skaicius | 1 bandymas (s) | 2 bandymas (s) | 3 bandymas (s) | Vidurkis (s) |
+|----------------|----------------|----------------|----------------|--------------|
+| 1 000          | 0.00296        | 0.00281        | 0.00287        | **0.00288**  |
+| 10 000         | 0.02759        | 0.02631        | 0.02613        | **0.02668**  |
+| 100 000        | 0.26101        | 0.24913        | 0.25015        | **0.25343**  |
+| 1 000 000      | 2.64710        | 2.68054        | 2.68823        | **2.67196**  |
+
+Failu kurimo laikas auga tiesiskai priklausomai nuo irasu skaiciaus (~2.67s / 1M irasu).
+
+---
+
+### 2 tyrimas: Konteineriu palyginimas
+
+Matuojami 3 zingsniai kiekvienam konteinerio tipui: **nuskaitymas** is failo, **rusiavimas** pagal galutini bala (didejimo tvarka), **skaidymas** i dvi grupes (1-a strategija). Kiekvienas matavimas atliktas 3 kartus, pateikiamas vidurkis.
+
+#### 1 000 irasu
+
+| Konteineris | Nuskaitymas (s) | Rusiavimas (s) | Skaidymas (s) |
+|-------------|-----------------|----------------|----------------|
+| vector      | 0.00304         | 0.00109        | 0.00019        |
+| list        | 0.00302         | 0.00120        | 0.00019        |
+| deque       | 0.00297         | 0.00110        | 0.00018        |
+
+#### 10 000 irasu
+
+| Konteineris | Nuskaitymas (s) | Rusiavimas (s) | Skaidymas (s) |
+|-------------|-----------------|----------------|----------------|
+| vector      | 0.02927         | 0.01330        | 0.00250        |
+| list        | 0.02928         | 0.01869        | 0.00227        |
+| deque       | 0.02926         | 0.01343        | 0.00212        |
+
+#### 100 000 irasu
+
+| Konteineris | Nuskaitymas (s) | Rusiavimas (s) | Skaidymas (s) |
+|-------------|-----------------|----------------|----------------|
+| vector      | 0.29364         | 0.13971        | 0.02779        |
+| list        | 0.28975         | 0.27207        | 0.03619        |
+| deque       | 0.29225         | 0.15333        | 0.03182        |
+
+#### 1 000 000 irasu
+
+| Konteineris | Nuskaitymas (s) | Rusiavimas (s) | Skaidymas (s) |
+|-------------|-----------------|----------------|----------------|
+| vector      | 2.91874         | 1.78334        | 0.31848        |
+| list        | 2.98777         | 3.94837        | 0.41607        |
+| deque       | 2.93293         | 2.14860        | 0.37310        |
+
+#### Konteineriu palyginimo analize
+
+**Nuskaitymas:** Visi trys konteineriai veikia praktiskai vienodai (~2.9s / 1M irasu), nes `push_back` yra amortizuotas O(1) visiems tipams.
+
+**Rusiavimas:** Cia matome didziausia skirtuma:
+
+| Konteineris | 100K rusiavimas | 1M rusiavimas | Santykis su vector |
+|-------------|-----------------|---------------|---------------------|
+| vector      | 0.140s          | 1.783s        | 1.00x (bazinis)     |
+| list        | 0.272s          | 3.948s        | **2.21x leciau**    |
+| deque       | 0.153s          | 2.149s        | 1.20x leciau        |
+
+`std::vector` yra greiciausias rusiavimui, nes duomenys saugomi istisiniame atminties bloke (puiki cache lokalizacija). `std::list` yra **2.2x leciau** nei vector, nes kiekvienas mazgas yra atskiroje atminties vietoje (bloga cache lokalizacija). `std::deque` yra tarp ju - duomenys saugomi blokais, todel cache lokalizacija geresnė nei list, bet blogesnė nei vector.
+
+**Skaidymas (1 strategija):** Visi konteineriai veikia panasiai, nes 1-a strategija tik iteruoja per elementus ir kopijuoja juos i naujus konteinerius (O(n)).
