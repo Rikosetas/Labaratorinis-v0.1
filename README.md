@@ -233,3 +233,81 @@ Su `std::deque`, 2 strategija taip pat veikia gerai (0.020s vs 0.028s su 100K), 
 | deque       | 0.01955s           | 0.02185s           | ~1x           |
 
 Su vector, 3 strategija yra **740 kartu greitesne** nei 2 strategija. Su list ir deque skirtumas minimalus, nes 2 strategija jau veikia efektyviai siem konteineriams.
+
+---
+
+## Strategiju aprasymas
+
+### 1 strategija (du nauji konteineriai)
+
+Bendras studentu konteineris lieka nepakeistas. Kiekvienas studentas **kopijuojamas** i viena is dvieju nauju konteineriu (`kietiakiai` arba `vargsiukai`) pagal galutini bala.
+
+- **Sudetingumas:** O(n) visiems konteineriams
+- **Privalumai:** Paprastas, vienodai veikia su visais konteineriais
+- **Trukumai:** Neefektyvus atminties atzvilgiu — tas pats studentas egzistuoja dviejuose konteineriuose (originalas + kopija)
+
+### 2 strategija (vienas naujas konteineris, trynimas is originalo)
+
+Vargsiukai perkeliami (`std::move`) i nauja konteinerio ir istrinami is bendro konteinerio. Po operacijos originaliame konteineryje lieka tik kietiakiai.
+
+- **Sudetingumas:** O(n) list/deque, **O(n²) vector**
+- **Privalumai:** Efektyviau atminties atzvilgiu — kiekvienas studentas egzistuoja tik viename konteineryje
+- **Trukumai:** Katastrofiskai letas `std::vector` konteineriui (465x leciau su 100K irasu)
+
+### 3 strategija (optimizuota su std::stable_partition)
+
+Naudojamas `std::stable_partition` algoritmas, kuris vienu perejimu perkelia visus kietiakius i konteinerio pradzia, o vargsiukus — i gala, issaugodamas pradiniu elementu tvarka. Tada vargsiukai efektyviai iskeliami vienu range perkėlimu.
+
+- **Sudetingumas:** O(n) su papildoma atmintimi, O(n log n) be jos
+- **Privalumai:** Universaliai efektyviausias metodas visiems konteineriu tipams
+- **Naudojami STL algoritmai:**
+  - `std::stable_partition` — efektyvus konteinerio skaidymas i dvi grupes
+  - `std::make_move_iterator` — efektyvus elementu perkelimas (vector/deque)
+  - `list::splice` — O(1) elementu perkelimas tarp sarasu (list)
+
+---
+
+## Konteineriu savybiu santrauka
+
+| Savybe | std::vector | std::list | std::deque |
+|--------|-------------|-----------|------------|
+| Atmintis | Istisinis blokas | Atskiri mazgai | Bloku masyvas |
+| Nuskaitymas (push_back) | Amortizuotas O(1) | O(1) | Amortizuotas O(1) |
+| Prieiga pagal indeksa | O(1) | O(n) | O(1) |
+| Trynimas is pradzios | **O(n)** | O(1) | O(1) |
+| Trynimas is vidurio | **O(n)** | O(1) | O(n) |
+| Rusiavimas | std::sort O(n log n) | list::sort O(n log n) | std::sort O(n log n) |
+| Cache draugiskumas | Labai geras | Blogas | Vidutinis |
+
+---
+
+## Projekto struktura
+
+```
+ConsoleApplication1/
+├── CMakeLists.txt                     - CMake kompiliavimo failas
+├── README.md                          - Dokumentacija
+├── .gitignore                         - Git ignoruojami failai
+├── ConsoleApplication1.sln            - Visual Studio sprendimas
+└── ConsoleApplication1/
+    ├── main.cpp                       - Pagrindine programa su meniu
+    ├── io.cpp / io.h                  - Ivedimo/isvedimo funkcijos
+    ├── skaiciavimas.cpp / .h          - Balu skaiciavimo funkcijos
+    ├── studentas.h                    - Studentas struktura
+    ├── studentas_utils.cpp / .h       - Studentu pagalbines funkcijos
+    ├── testavimas.cpp / .h            - Konteineriu/strategiju tyrimai, template funkcijos
+    ├── exceptions.h                   - Klaidu klases (FailoKlaida, DuomenuKlaida)
+    └── ConsoleApplication1.vcxproj    - Visual Studio projekto failas
+```
+
+---
+
+## Isvados
+
+1. **Nuskaitymas:** Visi trys konteineriai veikia praktiskai vienodai (~2.9s / 1M), nes `push_back` yra amortizuotas O(1).
+2. **Rusiavimas:** `std::vector` greiciausias (1.78s / 1M), `std::list` leciausias (3.95s / 1M, **2.2x leciau**) del blogos cache lokalizacijos. `std::deque` tarpinis variantas (2.15s / 1M).
+3. **1 strategija:** Vienodai O(n) visiems konteineriams, taciau neefektyvi atminties atzvilgiu (duomenys dubliuojami).
+4. **2 strategija:** Kritiski neefektyvi `std::vector` konteineriui (**465x leciau** su 100K irasu) del O(n) trynimo is pradzios. Taciau puikiai veikia su `std::list` (O(1) trynimas) ir `std::deque` (efektyvus trynimas is pradzios).
+5. **3 strategija:** Universaliai efektyviausias metodas — `std::stable_partition` uztikrina O(n) sudetinguma visiems konteineriams. Su vector pasiektas **740x pagreitejimas** palyginus su 2 strategija.
+6. **Geriausia kombinacija:** `std::vector` + 3 strategija — greiciausias rusiavimas ir efektyvus skaidymas.
+7. **Release** konfiguracija butina korektiskim rezultatams — Debug rezimas gali buti 10-100x leciau.
