@@ -46,3 +46,57 @@ Galutinis = 0.4 * (vidurkis arba mediana namu darbu) + 0.6 * egzamino balas
 | **OS** | Windows 10 x64 |
 | **Kompiliatorius** | MSVC v143 (Visual Studio 2022) |
 | **Konfiguracija** | Release x64, /O2 optimizacija |
+
+---
+
+## Kompiliavimas ir paleidimas
+
+### CMake (rekomenduojama, veikia visose OS)
+
+```bash
+# Sukurti build kataloga
+mkdir build
+cd build
+
+# Sugeneruoti projekta (Release rezimu)
+cmake .. -DCMAKE_BUILD_TYPE=Release
+
+# Kompiliuoti
+cmake --build . --config Release
+
+# Paleisti
+./programa          # Linux/macOS
+.\Release\programa  # Windows
+```
+
+### Visual Studio 2022
+
+1. Atidarykite `ConsoleApplication1.sln`
+2. Pasirinkite **Release | x64** konfiguracija
+3. Paleiskite **Build > Build Solution** (Ctrl+Shift+B)
+4. Paleiskite programa **Debug > Start Without Debugging** (Ctrl+F5)
+
+---
+
+## Naudojimas
+
+### Meniu parinktys
+
+| Nr. | Parinktis | Aprasymas |
+|-----|-----------|-----------|
+| 1 | Ivesti rankiniu budu | Rankinis studentu duomenu ivedimas |
+| 2 | Generuoti pazymius | Generuoti tik pazymius (vardai ivedami rankiniu budu) |
+| 3 | Generuoti viska | Generuoti vardus, pavardes ir pazymius |
+| 4 | Nuskaityti is failo | Nuskaityti studentus is `kursiokai.txt` |
+| 5 | 1 tyrimas | Failu generavimas ir kurimo spartos matavimas |
+| 6 | 2 tyrimas | Konteineriu palyginimas (vector vs list vs deque) |
+| 7 | 3 tyrimas | Strategiju palyginimas (1, 2, 3 strategijos) |
+| 8 | Baigti | Uzbaigti programos darba |
+
+### Testavimo eiga
+
+1. Paleiskite programa (**Release** konfiguracija butina korektiskim rezultatams)
+2. Pasirinkite galutinio balo skaiciavimo buda (1 - vidurkis, 2 - mediana)
+3. Pasirinkite **5** - sugeneruojami testiniai failai (1 000 - 1 000 000 irasu)
+4. Pasirinkite **6** - atliekamas konteineriu palyginimo tyrimas
+5. Pasirinkite **7** - atliekamas strategiju palyginimo tyrimas
