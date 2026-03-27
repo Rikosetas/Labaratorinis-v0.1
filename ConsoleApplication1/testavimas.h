@@ -209,4 +209,51 @@ void benchmarkKonteineris( const std::string& failas, bool mediana, int bandymu_
     skaid_avg = skaid_suma / bandymu_sk;
 }
 
+// ---------------------------------------------------------------------------
+// Benchmark: strategiju palyginimas (tik skaidymo laikas)
+// Duomenys nuskaitomi ir surusiuojami vienam karta, pries kiekviena
+// strategija konteineris nukopijuojamas (kopijos laikas nematuojamas).
+// ---------------------------------------------------------------------------
+template<typename Container>
+void benchmarkStrategijos( const std::string& failas, bool mediana, int bandymu_sk,
+    double& str1_avg, double& str2_avg, double& str3_avg )
+{
+    Container original = nuskaitytiIsFailoT<Container>( failas );
+    rusiuotiPagalGalutini( original, mediana );
+
+    double suma1 = 0, suma2 = 0, suma3 = 0;
+
+    for ( int b = 0; b < bandymu_sk; b++ )
+    {
+        {
+            Container data = original;
+            Container kiet, varg;
+            auto t1 = std::chrono::high_resolution_clock::now( );
+            strategija1( data, kiet, varg, mediana );
+            auto t2 = std::chrono::high_resolution_clock::now( );
+            suma1 += std::chrono::duration<double>( t2 - t1 ).count( );
+        }
+        {
+            Container data = original;
+            Container varg;
+            auto t1 = std::chrono::high_resolution_clock::now( );
+            strategija2( data, varg, mediana );
+            auto t2 = std::chrono::high_resolution_clock::now( );
+            suma2 += std::chrono::duration<double>( t2 - t1 ).count( );
+        }
+        {
+            Container data = original;
+            Container varg;
+            auto t1 = std::chrono::high_resolution_clock::now( );
+            strategija3( data, varg, mediana );
+            auto t2 = std::chrono::high_resolution_clock::now( );
+            suma3 += std::chrono::duration<double>( t2 - t1 ).count( );
+        }
+    }
+
+    str1_avg = suma1 / bandymu_sk;
+    str2_avg = suma2 / bandymu_sk;
+    str3_avg = suma3 / bandymu_sk;
+}
+
 #endif
