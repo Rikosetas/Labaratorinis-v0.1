@@ -222,3 +222,73 @@ void tyrimasKonteineriu( bool mediana )
 
     std::cout << "\nTyrimas baigtas.\n";
 }
+
+// ---------------------------------------------------------------------------
+// 3 tyrimas: strategiju palyginimas (1-a, 2-a, 3-ia strategija)
+// Kiekvienam konteinerio tipui matomas tik skaidymo laikas.
+// ---------------------------------------------------------------------------
+
+void tyrimasStrategiju( bool mediana )
+{
+    const int dydziai[] = { 1000, 10000, 100000, 1000000, 10000000 };
+    const std::string pavadinimai[] = {
+        "studentai_1000.txt",
+        "studentai_10000.txt",
+        "studentai_100000.txt",
+        "studentai_1000000.txt",
+        "studentai_10000000.txt"
+    };
+    const int bandymu_sk = 3;
+
+    std::cout << "\n================ 3 TYRIMAS: Strategiju palyginimas ================\n";
+    std::cout << "Kiekvienas matavimas atliktas " << bandymu_sk
+              << " kartus, pateikiamas vidurkis.\n";
+    std::cout << "Matuojamas TIK skaidymo i grupes laikas (be nuskaitymo ir rusiavimo).\n";
+
+    const char* konteineriai[] = { "std::vector", "std::list", "std::deque" };
+
+    for ( int k = 0; k < 3; k++ )
+    {
+        std::cout << "\n--- " << konteineriai[k] << " ---\n\n";
+        std::cout << std::left
+            << std::setw( 15 ) << "Irasu sk."
+            << std::setw( 20 ) << "1 strategija(s)"
+            << std::setw( 20 ) << "2 strategija(s)"
+            << std::setw( 20 ) << "3 strategija(s)"
+            << "\n";
+        std::cout << std::string( 75, '-' ) << "\n";
+
+        for ( int i = 0; i < 5; i++ )
+        {
+            {
+                std::ifstream test( pavadinimai[i] );
+                if ( !test.is_open( ) )
+                {
+                    std::cout << std::left << std::setw( 15 ) << dydziai[i]
+                        << "Failas nerastas!\n";
+                    continue;
+                }
+            }
+
+            double s1, s2, s3;
+
+            if ( k == 0 )
+                benchmarkStrategijos<std::vector<Studentas>>(
+                    pavadinimai[i], mediana, bandymu_sk, s1, s2, s3 );
+            else if ( k == 1 )
+                benchmarkStrategijos<std::list<Studentas>>(
+                    pavadinimai[i], mediana, bandymu_sk, s1, s2, s3 );
+            else
+                benchmarkStrategijos<std::deque<Studentas>>(
+                    pavadinimai[i], mediana, bandymu_sk, s1, s2, s3 );
+
+            std::cout << std::left << std::setw( 15 ) << dydziai[i]
+                << std::fixed << std::setprecision( 5 )
+                << std::setw( 20 ) << s1
+                << std::setw( 20 ) << s2
+                << std::setw( 20 ) << s3 << "\n";
+        }
+    }
+
+    std::cout << "\nTyrimas baigtas.\n";
+}
