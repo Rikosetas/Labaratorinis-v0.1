@@ -426,3 +426,19 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Generated test data files
+studentai_*.txt
+kietiakiai_*.txt
+vargsiukai_*.txt
+rezultatai.txt
+
+# CMake build
+build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+# Executables
+*.exe
