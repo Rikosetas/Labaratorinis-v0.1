@@ -92,4 +92,21 @@ inline double apskaiciuotiGalutiniBala( const Studentas& s, bool mediana )
         return skaiciuotiGalutini( skaiciuotiVidurki( s.nd, s.n ), s.egzaminas );
 }
 
+// ---------------------------------------------------------------------------
+// Rusiuoti konteinerio elementus pagal galutini bala (didejimo tvarka).
+// std::list naudoja savo .sort(), vector/deque naudoja std::sort.
+// ---------------------------------------------------------------------------
+template<typename Container>
+void rusiuotiPagalGalutini( Container& c, bool mediana )
+{
+    auto comp = [mediana]( const Studentas& a, const Studentas& b ) {
+        return apskaiciuotiGalutiniBala( a, mediana ) < apskaiciuotiGalutiniBala( b, mediana );
+    };
+
+    if constexpr ( std::is_same_v<Container, std::list<Studentas>> )
+        c.sort( comp );
+    else
+        std::sort( c.begin( ), c.end( ), comp );
+}
+
 #endif
