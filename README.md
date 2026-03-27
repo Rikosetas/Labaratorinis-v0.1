@@ -171,3 +171,65 @@ Matuojami 3 zingsniai kiekvienam konteinerio tipui: **nuskaitymas** is failo, **
 `std::vector` yra greiciausias rusiavimui, nes duomenys saugomi istisiniame atminties bloke (puiki cache lokalizacija). `std::list` yra **2.2x leciau** nei vector, nes kiekvienas mazgas yra atskiroje atminties vietoje (bloga cache lokalizacija). `std::deque` yra tarp ju - duomenys saugomi blokais, todel cache lokalizacija geresnė nei list, bet blogesnė nei vector.
 
 **Skaidymas (1 strategija):** Visi konteineriai veikia panasiai, nes 1-a strategija tik iteruoja per elementus ir kopijuoja juos i naujus konteinerius (O(n)).
+
+---
+
+### 3 tyrimas: Strategiju palyginimas
+
+Matuojamas **tik skaidymo i grupes laikas** (nuskaitymas ir rusiavimas neitraukiami). Duomenys pries skaidyma surusiuojami pagal galutini bala didejimo tvarka — todel vargsiukai (< 5.0) yra konteinerio **pradzioje**.
+
+#### std::vector
+
+| Irasu skaicius | 1 strategija (s) | 2 strategija (s) | 3 strategija (s) |
+|----------------|-------------------|-------------------|-------------------|
+| 1 000          | 0.00018           | 0.00129           | 0.00010           |
+| 10 000         | 0.00231           | 0.11453           | 0.00139           |
+| 100 000        | 0.02424           | **11.28164**      | 0.01524           |
+
+#### std::list
+
+| Irasu skaicius | 1 strategija (s) | 2 strategija (s) | 3 strategija (s) |
+|----------------|-------------------|-------------------|-------------------|
+| 1 000          | 0.00017           | 0.00010           | 0.00010           |
+| 10 000         | 0.00234           | 0.00146           | 0.00144           |
+| 100 000        | 0.02884           | 0.01918           | 0.02297           |
+
+#### std::deque
+
+| Irasu skaicius | 1 strategija (s) | 2 strategija (s) | 3 strategija (s) |
+|----------------|-------------------|-------------------|-------------------|
+| 1 000          | 0.00015           | 0.00010           | 0.00011           |
+| 10 000         | 0.00198           | 0.00142           | 0.00157           |
+| 100 000        | 0.02797           | 0.01955           | 0.02185           |
+
+#### Strategiju palyginimo analize
+
+Strategiju tyrimo rezultatai aiskiai parodo kiekvieno konteinerio ir strategijos privalumus bei trukumus:
+
+**2 strategija su std::vector — katastrofiskai leta:**
+
+| Irasu sk. | 1 strategija | 2 strategija | Skirtumas |
+|-----------|-------------|-------------|-----------|
+| 1 000     | 0.00018s    | 0.00129s    | 7x        |
+| 10 000    | 0.00231s    | 0.11453s    | **50x**   |
+| 100 000   | 0.02424s    | 11.28164s   | **465x**  |
+
+Su 100 000 irasu 2 strategija su vector uztruko **11.28 sekundziu** — tai **465 kartus leciau** nei 1 strategija ir **740 kartus leciau** nei 3 strategija! Priezastis: kadangi duomenys surusiuoti didejimo tvarka, vargsiukai yra konteinerio pradzioje. Kiekvienas `erase()` is vector pradzios perstumia **visus** likusius elementus (O(n)), o tai sukuria O(n²) bendra sudetinguma.
+
+**2 strategija su std::list ir std::deque — greita:**
+
+Su `std::list`, 2 strategija veikia **greiciau** nei 1 strategija (0.019s vs 0.029s su 100K), nes `list::erase()` yra O(1) operacija — trinant elementa tereikia perjungti rodykles, jokie elementai nestumiami.
+
+Su `std::deque`, 2 strategija taip pat veikia gerai (0.020s vs 0.028s su 100K), nes vargsiukai yra konteinerio pradzioje, o `deque::erase()` is pradzios yra efektyvi O(1) operacija (panasiai kaip `pop_front`).
+
+**3 strategija — universaliai greita:**
+
+3 strategija naudoja `std::stable_partition`, kuris vienu perejimu perkelia kietiakius i konteinerio pradzia. Tai veikia efektyviai su **visais** konteineriu tipais:
+
+| Konteineris | 100K: 2 strategija | 100K: 3 strategija | Pagreitejimas |
+|-------------|--------------------|--------------------|---------------|
+| vector      | 11.28164s          | 0.01524s           | **740x**      |
+| list        | 0.01918s           | 0.02297s           | ~1x           |
+| deque       | 0.01955s           | 0.02185s           | ~1x           |
+
+Su vector, 3 strategija yra **740 kartu greitesne** nei 2 strategija. Su list ir deque skirtumas minimalus, nes 2 strategija jau veikia efektyviai siem konteineriams.
