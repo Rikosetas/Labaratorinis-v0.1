@@ -127,4 +127,27 @@ void strategija1( const Container& studentai, Container& kietiakiai,
     }
 }
 
+// ---------------------------------------------------------------------------
+// 2 strategija: vargsiukai perkeliami i nauja konteinerio, istrinami is
+// pagrindinio. Pagrindiniame konteineryje lieka tik kietiakiai.
+// Efektyviau atminciai, taciau dazni trynimai leti vector/deque konteineriams.
+// ---------------------------------------------------------------------------
+template<typename Container>
+void strategija2( Container& studentai, Container& vargsiukai, bool mediana )
+{
+    auto it = studentai.begin( );
+    while ( it != studentai.end( ) )
+    {
+        if ( apskaiciuotiGalutiniBala( *it, mediana ) < 5.0 )
+        {
+            vargsiukai.push_back( std::move( *it ) );
+            it = studentai.erase( it );
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
 #endif
