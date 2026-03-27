@@ -146,3 +146,79 @@ void tyrimas1_failuKurimas( )
 
     std::cout << "\nFailai sugeneruoti ir issaugoti.\n";
 }
+
+// ---------------------------------------------------------------------------
+// 2 tyrimas: konteineriu palyginimas (vector vs list vs deque)
+// Matuojami 3 zingsniai: nuskaitymas, rusiavimas, skaidymas (1-a strategija)
+// ---------------------------------------------------------------------------
+void tyrimasKonteineriu( bool mediana )
+{
+    const int dydziai[] = { 1000, 10000, 100000, 1000000, 10000000 };
+    const std::string pavadinimai[] = {
+        "studentai_1000.txt",
+        "studentai_10000.txt",
+        "studentai_100000.txt",
+        "studentai_1000000.txt",
+        "studentai_10000000.txt"
+    };
+    const int bandymu_sk = 3;
+
+    std::cout << "\n================ 2 TYRIMAS: Konteineriu palyginimas ================\n";
+    std::cout << "Kiekvienas matavimas atliktas " << bandymu_sk
+              << " kartus, pateikiamas vidurkis.\n\n";
+
+    std::cout << std::left
+        << std::setw( 12 ) << "Irasu sk."
+        << std::setw( 14 ) << "Konteineris"
+        << std::setw( 18 ) << "Nuskaitymas(s)"
+        << std::setw( 18 ) << "Rusiavimas(s)"
+        << std::setw( 18 ) << "Skaidymas(s)"
+        << "\n";
+    std::cout << std::string( 80, '-' ) << "\n";
+
+    for ( int i = 0; i < 5; i++ )
+    {
+        {
+            std::ifstream test( pavadinimai[i] );
+            if ( !test.is_open( ) )
+            {
+                std::cout << std::left << std::setw( 12 ) << dydziai[i]
+                    << "Failas nerastas! Pirma paleiskite 1 tyrima.\n";
+                continue;
+            }
+        }
+
+        double nusk, rus, skaid;
+
+        benchmarkKonteineris<std::vector<Studentas>>(
+            pavadinimai[i], mediana, bandymu_sk, nusk, rus, skaid );
+        std::cout << std::left << std::setw( 12 ) << dydziai[i]
+            << std::setw( 14 ) << "vector"
+            << std::fixed << std::setprecision( 5 )
+            << std::setw( 18 ) << nusk
+            << std::setw( 18 ) << rus
+            << std::setw( 18 ) << skaid << "\n";
+
+        benchmarkKonteineris<std::list<Studentas>>(
+            pavadinimai[i], mediana, bandymu_sk, nusk, rus, skaid );
+        std::cout << std::left << std::setw( 12 ) << ""
+            << std::setw( 14 ) << "list"
+            << std::fixed << std::setprecision( 5 )
+            << std::setw( 18 ) << nusk
+            << std::setw( 18 ) << rus
+            << std::setw( 18 ) << skaid << "\n";
+
+        benchmarkKonteineris<std::deque<Studentas>>(
+            pavadinimai[i], mediana, bandymu_sk, nusk, rus, skaid );
+        std::cout << std::left << std::setw( 12 ) << ""
+            << std::setw( 14 ) << "deque"
+            << std::fixed << std::setprecision( 5 )
+            << std::setw( 18 ) << nusk
+            << std::setw( 18 ) << rus
+            << std::setw( 18 ) << skaid << "\n";
+
+        std::cout << std::string( 80, '-' ) << "\n";
+    }
+
+    std::cout << "\nTyrimas baigtas.\n";
+}
