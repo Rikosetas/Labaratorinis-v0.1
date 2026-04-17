@@ -53,7 +53,10 @@ std::vector<Studentas> nuskaitytiIsFailo( const std::string& failoVardas )
     std::vector<Studentas> out;
     std::string line;
 
-    if ( !std::getline( stream, line ) )
+    std::stringstream a2;
+    a2 << stream.rdbuf( );
+
+    if ( !std::getline( a2, line ) )
         return out;
 
     std::stringstream header_stream( line );
@@ -65,7 +68,7 @@ std::vector<Studentas> nuskaitytiIsFailo( const std::string& failoVardas )
 
     size_t nd_count = cols.size( ) >= 3 ? cols.size( ) - 3 : 0;
 
-    while ( std::getline( stream, line ) )
+    while ( std::getline( a2, line ) )
     {
         if ( line.empty( ) )
             continue;
@@ -115,11 +118,15 @@ void isvestiKategorijaIFaila( const std::string& failoVardas,
         else
             galutinis = skaiciuotiGalutini( skaiciuotiVidurki( s.nd, s.n ), s.egzaminas );
 
-        out << std::left
+        std::stringstream ss;
+
+        ss << std::left
             << std::setw( 20 ) << s.pavarde
             << std::setw( 20 ) << s.vardas
             << std::fixed << std::setprecision( 2 )
             << std::setw( 20 ) << galutinis << "\n";
+
+        out << ss.str( );
     }
 
     out.close( );
